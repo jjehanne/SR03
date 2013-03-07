@@ -6,7 +6,7 @@
 #include <sys/msg.h>
 #include <string.h>
 #include "iniobj.h"
-#define NB_MAX_CLT 4
+#define NB_MAX_CLT 101 //104
 #define NB_MAX_CLT_SIM 2
 #define NB_MAX_OBJ 3
 
@@ -16,7 +16,7 @@ int main(){
     int id_msg;
     msg message;
 
-    int num_client = 0;
+    int num_client = 100;
     int tot_clt = 0;
     int sim_clt = 0;
 
@@ -28,7 +28,7 @@ int main(){
         printf("Serveur actif. En attente de requetes...\n");
         while(1){
         //lecture de la file tant que le 4eme et dernier client demande des reponse
-        msgrcv(id_msg, (void *) &message, sizeof(message.operation), 1, 0); 
+        msgrcv(id_msg, (void *) &message, sizeof(msg) - sizeof(long), 1, 0); 
         // long_message => longueur du message sans le type, truc cf type dans climess.c, 1 vient du client, cest une question au serveur
                 if(message.operation == 0){
 
@@ -39,18 +39,18 @@ int main(){
                         num_client++;
                         tot_clt++;
                         sim_clt++;
-                        message.operation = num_client ; //identifiant du client 
-                        printf("Ajout client %d: \nsimultane: %d \ntotal: %d\n",message.operation, sim_clt, tot_clt);
+                        message.numero_client = num_client ; //identifiant du client 
+                        printf("Ajout client %d: \nsimultane: %d \ntotal: %d\n",message.numero_client, sim_clt, tot_clt);
                     }
                     else if (tot_clt >= NB_MAX_CLT){
                         printf ("ID attribution denied: Maximum client number reached\n");
-                        message.operation = 400;
+                        message.numero_client = 400;
                     }
                     else if (sim_clt >= NB_MAX_CLT_SIM){
                         printf ("ID attribution denied: Maximum simultaneous client number reached\n");
-                        message.operation = 500;
+                        message.numero_client = 500;
                     }
-                    msgsnd(id_msg, (void*) &message, sizeof(message.operation), 0);
+                    msgsnd(id_msg, (void*) &message, sizeof(msg) - sizeof(long), 0);
 
                 }
 
@@ -58,7 +58,7 @@ int main(){
                     printf("Demande de la liste des produits recue, envoi en cours...");
                     message.type = message.numero_client;
                     strcpy(message.objet, "toto");
-                    msgsnd(id_msg, (void*) &message, strlen(message.objet) + 1, 0);
+                    msgsnd(id_msg, (void*) &message, sizeof(msg) - sizeof(long), 0);
                 }
 
                 else if(message.operation == 3){
