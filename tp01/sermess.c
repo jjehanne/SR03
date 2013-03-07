@@ -1,69 +1,81 @@
-#include <sys/types.h>
 #include <stdio.h>
-#include <iniobj.h>
-#define client_max 2
+#include <stdlib.h>
+#include <unistd.h>
+#include <sys/types.h>
+#include <sys/ipc.h>
+#include <sys/msg.h>
+#include <string.h>
+#include "iniobj.h"
+#define NB_MAX_CLT 4
+#define NB_MAX_CLT_SIM 2
+#define NB_MAX_OBJ 3
 
 
 int main(){
     key_t clef;
     int id_msg;
-
     msg message;
 
+    int num_client = 0;
+    int tot_clt = 0;
+    int sim_clt = 0;
+
     clef = ftok("./sr03p008.txt", 0);
-    id_msg = msgget(clef, IPC_CREAT|IPC_EXCL|0666); // on cree la file pour éviter qu'il y a déjà quelque chose dedans
+    id_msg = msgget(clef, IPC_CREAT|IPC_EXCL|0666); // on cree la file pour éviter d'avoir déjà quelque chose dedans
     if (id_msg == -1)
         perror("File deja existante");
     else{
+        printf("Serveur actif. En attente de requetes...\n");
+        while(1){
         //lecture de la file tant que le 4eme et dernier client demande des reponse
-        msgrcv(id_msg, (void *) &message, long_message, 1, 0); 
+        msgrcv(id_msg, (void *) &message, sizeof(message.operation), 1, 0); 
         // long_message => longueur du message sans le type, truc cf type dans climess.c, 1 vient du client, cest une question au serveur
-        switch (message.operation){
-            case(0):     //demande d'identifiant
-                // unique_client_number(); si plus de 4 client renvoyer 0 pour refuser lacces
-                message.type = 2;
-                message.operation = 1; //identifiant du client 
-                msgsnd(id_msg, (void*) &message, long_message, 0);
+                if(message.operation == 0){
 
-            case(1):    //demande liste produits + dispo
+                    printf("Demande d'identifiant recue, traitement en cours...\n");
+                    // unique_client_number(); si plus de NB_MAX_CLT client renvoyer un code pour refuser lacces
+                    message.type = 2;
+                    if (num_client < NB_MAX_CLT && sim_clt < NB_MAX_CLT_SIM){
+                        num_client++;
+                        tot_clt++;
+                        sim_clt++;
+                        message.operation = num_client ; //identifiant du client 
+                        printf("Ajout client %d: \nsimultane: %d \ntotal: %d\n",message.operation, sim_clt, tot_clt);
+                    }
+                    else if (tot_clt >= NB_MAX_CLT){
+                        printf ("ID attribution denied: Maximum client number reached\n");
+                        message.operation = 400;
+                    }
+                    else if (sim_clt >= NB_MAX_CLT_SIM){
+                        printf ("ID attribution denied: Maximum simultaneous client number reached\n");
+                        message.operation = 500;
+                    }
+                    msgsnd(id_msg, (void*) &message, sizeof(message.operation), 0);
 
-                // la reponse est a adressée a un client en particulier donc type depend du num_client
-                message.type = message.numero_client + 100 ;
-                message.param = liste_produit;
-                msgsnd(id_msg, (void*) &message, long_message,0);
+                }
 
-            case(2):    // Demande stock et prix
-                message.type = message.numero_client + 100 ;
-                message.param = stock;
-                msgsnd(id_msg, (void*) &message, long_message,0);
+                else if (message.operation == 1){
+                    printf("Demande de la liste des produits recue, envoi en cours...");
+                    message.type = message.numero_client;
+                    strcpy(message.objet, "toto");
+                    msgsnd(id_msg, (void*) &message, strlen(message.objet) + 1, 0);
+                }
 
-            case(3):  // Demande de fin de session
+                else if(message.operation == 3){
+                    sim_clt--;
+                    printf("Suppression client : simultane: %d \ntotal: %d\n", sim_clt, tot_clt);
+                } 
 
-                message.type = message.numero_client + 100 ;
-                msgsnd(id_msg, (void*) &message, long_message,0);
-                
-       
+                if (tot_clt == NB_MAX_CLT && sim_clt == 0){
+                    printf("Server handled all allowed clients\n");
+                    printf("Server shutting down...\n");
+                    msgctl(id_msg, IPC_RMID, NULL); // removing queue
+                    return (EXIT_SUCCESS);
+                }
+
+
+        };
     }
 
-    /*int unique_client_number(){
-        si plus de client_max numeros attribués , renvoyer 0
-        sinon attribuer un numero unique
-        
-    }
-
-    int server_shutdown(){
-        recuperer nombre de numero attribué et le mettre dans total_count
-        pour chaque connexion, ajouté 1 a clients_co
-        pour chaque deconnexion enlever 1 a client_co
-        if (total_count == client_max && client_co == 0){
-            printf("The %d allowed customers have been handled and all of them left !"\n Bye !! \n, client_max);
-            exit(0);
-        }
-
-
-        
-
-        
-    }
     return 0;
 }

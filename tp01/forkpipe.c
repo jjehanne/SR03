@@ -52,8 +52,8 @@ int main(){
                     close(pipefd[1]); //fermeture entree pour le pere
                     close(pipefd[0]); //fermeture sortie pour le pere
 
-                    //waitpid(pid1, WUNTRACED);
-                    //waitpid(pid2, WUNTRACED);
+                    //waitpid(pid1, &status, WUNTRACED);
+                    //waitpid(pid2, &status, WUNTRACED);
 
                 
                }
