@@ -1,13 +1,33 @@
-#define REQ_NUMERO_CLIENT 0
-#define REQ_LISTE_OBJ 1
-#define REQ_STOCK_PRIX 2
-#define REQ_FIN 3
+#define NB_MAX_TYPE_OBJ 3
 
+typedef struct produit{
+    char* nom;
+    float prix;
+    int stock;
+}produit;
 
-typedef struct{
-	long  type;
-	int operation;
-	int numero_client;
-	char objet[100];
+produit* iniobj(){
+    //Creation d'une liste d'objet vide
+    produit* liste = (produit*) malloc(NB_MAX_TYPE_OBJ*sizeof(produit));
+    if (liste == NULL){
+        printf("malloc: Erreur d'allocation memoire");
+        return NULL;
+    }
 
-}msg;
+    //Remplissage de la liste
+
+    liste[0].nom = "Stylo";
+    liste[0].prix = 10.5;
+    liste[0].stock = 25;
+
+    liste[1].nom = "Pantalon";
+    liste[1].prix = 35;
+    liste[1].stock = 12;
+
+    liste[2].nom = "Chemise";
+    liste[2].prix = 25;
+    liste[2].stock = 18;
+
+    return liste;
+
+}
