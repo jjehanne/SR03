@@ -25,7 +25,6 @@ int main(){
         return (EXIT_SUCCESS);
     }
     else{
-        
         //initialisation du message
         message.type = 187; // 187 sera une question au serveur
         message.operation = '0'; // 0 sera la demande de numero client
@@ -50,7 +49,7 @@ int main(){
             printf("Client-Serveur\n a. Demande de la liste des produits\n z. Demande du stock\n q. Quitter\nQue souhaitez vous faire ?\n");
             scanf("%s", &choix);
             switch(choix){
-                case('a'): 
+                case('a'):
                     printf("\n\n\nDemande de la liste des produits en cours...\n");
                     message.type = 187; //question serveur
                     message.operation = 'a'; //liste des produits
@@ -75,9 +74,8 @@ int main(){
 
                     msgsnd(id_msg, (void *) &message, sizeof(msg) - sizeof(long), 0);
                     msgrcv(id_msg, (void *) &message, sizeof(msg) - sizeof(long), message.numero_client, 0);
-
-                    printf("Stock et Prix pour le produit: %s\n- Prix: %d euros\n- Stock: %d piece(s) disponible(s)\n", message.objet[0], message.prix, message.stock);
-
+                    printf("Stock et Prix pour le produit: %s\n", message.objet[0]);
+                    printf("- Prix: %f euros\n- Stock: %d piece(s) disponible(s)\n", message.prix, message.stock);
                     break;
                 case('q'):
                     message.type = 187; //question suivante
@@ -85,7 +83,7 @@ int main(){
 
                     msgsnd(id_msg, (void *) &message, sizeof(msg) - sizeof(long), 0);
                     printf("Exiting. Bye !\n");
-                    return (EXIT_SUCCESS); 
+                    return (EXIT_SUCCESS);
             };
         };
     }
