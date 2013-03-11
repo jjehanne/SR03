@@ -31,7 +31,7 @@ int main(){
         printf("Demande d'identifiant en cours...\n");
 
         msgsnd(id_msg, (void *) &message, sizeof(msg) - sizeof(long), 0); // long_message => longueur du message sans le type
-        msgrcv(id_msg, (void *) &message, sizeof(msg) - sizeof(long), 2, 0); //2 represente la reponse au client
+        msgrcv(id_msg, (void *) &message, sizeof(msg) - sizeof(long), 200, 0); //200 represente la reponse au client
 
         if (message.numero_client == 400){
             printf("Sorry, max client number reached! Exiting...\n");
@@ -64,8 +64,8 @@ int main(){
                     printf("\n\n\n");
                     break;
                 case('z'):
-                    printf("Demande du stock et du prix\n");
-                    printf("Pour quel produit souhaitez vous avoir le stock et le prix? \n");
+                    printf("\n\n\nDemande du stock et du prix\n");
+                    printf("Pour quel produit souhaitez vous avoir le stock et le prix? \n\n\n");
                     scanf("%d", &choix_produit);
                     message.type = 187; //question serveur
                     message.operation = 'z'; //Stock

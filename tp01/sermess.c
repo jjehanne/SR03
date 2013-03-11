@@ -38,7 +38,7 @@ int main(){
 
                     printf("Demande d'identifiant recue, traitement en cours...\n");
                     // unique client number si plus de NB_MAX_CLT client renvoyer un code pour refuser lacces
-                    message.type = 2;
+                    message.type = 200;
                     if (num_client < NB_MAX_CLT && sim_clt < NB_MAX_CLT_SIM){
                         num_client++;
                         tot_clt++;
