@@ -74,8 +74,8 @@ int main(){
 
                     msgsnd(id_msg, (void *) &message, sizeof(msg) - sizeof(long), 0);
                     msgrcv(id_msg, (void *) &message, sizeof(msg) - sizeof(long), message.numero_client, 0);
-                    printf("Stock et Prix pour le produit: %s\n", message.objet[0]);
-                    printf("- Prix: %f euros\n- Stock: %d piece(s) disponible(s)\n", message.prix, message.stock);
+                    printf("\n\n\nStock et Prix pour le produit: %s\n", message.objet[0]);
+                    printf("- Prix: %f euros\n- Stock: %d piece(s) disponible(s)\n\n\n", message.prix, message.stock);
                     break;
                 case('q'):
                     message.type = 187; //question suivante
