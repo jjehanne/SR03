@@ -4,13 +4,13 @@
 #include <netinet/in.h>
 #include <netdb.h>
 #include <stdio.h>
-#include "iniboj.h"
+#include "iniobj.h"
 
 int main(int argc, char *argv[]){
     int sd, saddrl, sds, saddrcl;
     pid_t pid;
 
-    struc sockaddr_in saddrser, saddrcli;
+    struct sockaddr_in saddrser, saddrcli;
 
     sd = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP);
     saddrl = sizeof(saddrser);
@@ -25,7 +25,7 @@ int main(int argc, char *argv[]){
 
     pid = fork();
     if(pid < 0)
-        perror("fail fork");
+        perror("fork() failed");
     else if(pid > 0){
         traiterclient();
     }

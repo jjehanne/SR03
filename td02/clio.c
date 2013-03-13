@@ -1,12 +1,15 @@
-#include <stdio.h>
-#include <sys/types.h>
-#include <netinet/in.h>
-#include <netdb.h>
-#include <sys/socket.h>
+#include <stdio.h>  
+#include <stdlib.h>
 #include <string.h>
 #include <strings.h>
+#include <unistd.h>
+#include <sys/socket.h>
+#include <sys/types.h>
+#include <arpa/inet.h>
+#include <netinet/in.h>
+#include <netdb.h>
 
-int main(){
+int main(int arc, char *argv[]){
 	struct sockaddr_in saddrcli, saddrserv;
 	struct hostent * hid;
 	int sd, saddrl;
@@ -17,9 +20,9 @@ int main(){
 
 	bzero(&saddrserv, saddrl);
 	hid = gethostbyname(argv[1]);
-	saddrserv.sin_family = AF_NET;
+	saddrserv.sin_family = AF_INET;
 	saddrserv.sin_port = htons(atoi(argv[2]));
-	bcopy(hid->h_addr, &(saddrserv.sin_addr.s_addr));
+	bcopy(hid->h_addr, &(saddrserv.sin_addr.s_addr), saddrl);
 	connect(sd, (struct sockaddr *) &saddrserv, saddrl);
 
 }
