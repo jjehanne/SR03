@@ -4,4 +4,5 @@ typedef struct {
 	int ii;
 	int jj;
 	double dd;
+	int iqt;
 } obj;
