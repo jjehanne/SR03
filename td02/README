@@ -1,4 +1,8 @@
+TD02
+====
+
 TD02 : Communication par sockets TCP
+---
 
 - A/ Serveur et client TCP simples
 - B/ Le serveur TCP simple devient un vrai serveur concourant
