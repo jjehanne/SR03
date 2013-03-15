@@ -83,11 +83,11 @@ int main(int argc, char *argv[]){
         else {
             //processus père
             waitpid(pid, 0, 0);
+            close(sd); //close server socket
+            close(sds); //close client socket
+            exit(0);
         }
     }
-
-    close(sd); //close server socket
-    close(sds); //close client socket
 
     return 0;
 }
