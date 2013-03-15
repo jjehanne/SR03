@@ -54,7 +54,7 @@ int main(int argc, char *argv[]){
         } 
         else {
             printf("Client - Object #%d successfully sent.\n",i);
-            if(liste[i].iqt == -1) printf("Token iqt detected, all objects sent\n");
+            if(liste[i].iqt == -1) printf("Token iqt detected, all objects sent.\n");
         }
     };
 
