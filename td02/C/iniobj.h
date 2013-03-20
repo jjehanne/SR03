@@ -4,6 +4,29 @@
 #define TABLEN 3
 
 obj* iniobj(){
+    int j;
+
+    //Creation d'une liste d'objet vide
+    obj* liste = (obj*) malloc(TABLEN*sizeof(obj));
+    if (liste == NULL){
+        printf("malloc: Erreur d'allocation memoire");
+        return NULL;
+    }
+
+    //Remplissage de la liste
+    for(j=0; j < TABLEN; j++){
+        strcpy(liste[j].id,"");
+        strcpy(liste[j].desc,"");
+        liste[j].ii = 0;
+        liste[j].jj = 0;
+        liste[j].dd = 0;
+        liste[j].iqt = 0;
+    }
+    return liste;
+
+}
+
+obj* createList(){
     //Creation d'une liste d'objet vide
     obj* liste = (obj*) malloc(TABLEN*sizeof(obj));
     if (liste == NULL){
