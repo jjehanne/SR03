@@ -23,3 +23,9 @@ Sujet : http://moodle.utc.fr/file.php/872/TD_P2013/td_sockets_tcp.html
 TD03 : HTTP - WEB - CSS
 
 http://moodle.utc.fr/file.php/872/TD_P2013/td_web.html
+
+------------------------------------------------------------------------------------
+
+TD04 : JavaScript/Ajax + PHP
+
+Sujet : http://moodle.utc.fr/file.php/872/TD_P2013/td_js_ajax_php.html
