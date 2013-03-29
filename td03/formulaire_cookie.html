@@ -1,0 +1,45 @@
+<html>
+<head>
+<style>
+.tt { background-color: gray; }
+td.cell5 { border: 5px dashed blue; }
+a:visited { color: red; font-size: 10px; }
+div#up { position:absolute; left:150px; top:150px; height:300px; overflow-x:hidden; overflow-y:auto; zindex:2}
+#pushme { font-size: 24pt; }
+</style>
+</head>
+<body class="tt">
+<div align="center">welcome to my website !!!</div>
+<div id="up">
+<a href="http://www.google.fr" target="_blank" > Go there for fun !!</a>
+<form method="post" action="http://tuxa.sme.utc/~sr03/phpinfo/setcookie.php">
+
+    <p>
+        <label>Name</label> : <input type="text" name="name" /><br />
+        <label>Value</label> : <input type="text" name="value" /><br />
+        <label for="domain">Enter your domain:</label><br />
+                <select name="domain" id="domain">
+                        <option value="tuxa.sme.utc">tuxa.sme.utc</option>
+                        <option value="sme.utc">sme.utc</option>
+                        <option value="utc">utc</option>
+                        <option value="utc.fr">utc.fr</option>
+                        <option value="microsoft.com">microsoft.com</option>
+                </select><br />
+        <label>Path</label> : <input type="text" name="path" /><br />
+        <label>Expires</label> : <input type="text" name="expires" /><br />
+        <label>PHPInfo</label> : <input type="checkbox" name="phpinfo" value="true" /><br />
+        <input id="pushme" type="submit" value="Envoie la sauce !">
+    </p>
+</form>
+</div>
+<div>
+<table>
+        <tr>
+                <td class="cell5">BACON</td>
+                <td>FOO</td>
+                <td class="cell5">EGGS</td>
+        </tr>
+</table>
+</div>
+</body>
+</html>
