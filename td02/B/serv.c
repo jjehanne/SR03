@@ -1,109 +1,70 @@
-#include <sys/socket.h> // accept(), bind(), connect(), listen(), recv(), send(), socket()..
-#include <sys/types.h> // data types
-#include <sys/wait.h> //waitpid()
-#include <unistd.h> // fork(), pipe(), sleep(), read(), write()...
-#include <netinet/in.h> // ntohl(), ntohs(), htonl() and htons()
-#include <netdb.h> // gethostbyname()
-#include <stdio.h> 
+#include <stdio.h>
+#include <stdlib.h>
+#include <sys/types.h>
+#include <netinet/in.h>
+#include <netdb.h>
+#include <sys/socket.h>
+#include <string.h>
+#include <strings.h>
+#include <unistd.h>
+#include <arpa/inet.h>
 #include <signal.h>
 #include "iniobj.h"
 
-void handlerSIGCHLD(){
-    int status;
-    waitpid(-1, &status, WUNTRACED);
-    printf("Server - Child terminated with status %d\n", status);
+void traiterclient(int sock){
+	sleep(1);
+	obj o;
+	do {
+
+		if (recv(sock, &o, sizeof(obj),  MSG_WAITALL) < 0) {
+			return;
+		}
+
+		printf("recu :\n objet %s : %s, %d, %d, %g\n\n", o.id, o.desc, o.ii, o.jj, o.dd);
+
+	} while (o.iqt != -1);
+
+	close(sock);
 }
 
-void traiterClient(int sds){
 
-    sleep(5);
+void handlerSigchld(){
+	int statut;
+	waitpid(-1, &statut, 0);
+	printf("child terminated with status : %d\n", statut);
 
-    obj liste;
-    int recvData;
-    if((recvData=recv(sds, &liste, sizeof(obj), 0)) < 0){
-        perror("recv() failed");
-        exit(1);
-    } 
-    else {
-        while(recvData > 0){
-
-            printf("Object received:\n");
-            printf("    %s\n",liste.id);
-            printf("    %s\n",liste.desc);
-            printf("    %d\n",liste.ii);
-            printf("    %d\n",liste.jj);
-            printf("    %f\n\n",liste.dd);
-
-            if(liste.iqt == -1) printf("End of list token received, all objects received.\n");
-
-            recvData=recv(sds,&liste,sizeof(obj),0);
-
-        }
-    }
-    close(sds); //close client socket
 }
 
 int main(int argc, char *argv[]){
-    int sd, saddrl, sds, saddrCliLen;
-    pid_t pid;
+	int sd, saddrl, sds, saddrcl;
+	pid_t pid;
 
-    struct sockaddr_in saddrser;
-    struct sockaddr_in saddrcli;
+	struct sockaddr_in saddrser, saddrcli;
+	signal(SIGCHLD, handlerSigchld);
+	sd = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+	saddrl = sizeof(struct sockaddr_in);
+	bzero(&saddrser, saddrl);
+	saddrser.sin_family = AF_INET;
+	saddrser.sin_port = htons(atoi(argv[1]));
+	saddrser.sin_addr.s_addr = htonl(INADDR_ANY);
+	bind(sd, (const struct sockaddr*) &saddrser, saddrl);
+	listen(sd,5);
+	saddrcl = sizeof(saddrcli);
 
-    signal(SIGCHLD, handlerSIGCHLD);
+	while (1) {
+		sds = accept(sd, (struct sockaddr*)&saddrcli, &saddrcl);
+		pid = fork();
+		if (pid < 0) {
+			perror("fail fork");
+			return 1;
+		} else if (pid == 0) {
+			traiterclient(sds);
+			return 0;
+		}
 
-    if (argc != 2){
-        fprintf(stderr, "Usage: %s <Server Port>\n", argv[0]);
-        exit(1);
-    }
 
-    if ((sd = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP)) < 0){
-        perror("socket() failed");
-        exit(1);
-    }
-
-    saddrl = sizeof(saddrser);
-
-    bzero(&saddrser, saddrl);
-    saddrser.sin_family = AF_INET;
-    saddrser.sin_port = htons(atoi(argv[1]));
-    saddrser.sin_addr.s_addr = htonl(INADDR_ANY);
-
-    if ((bind(sd, (const struct sockaddr *) &saddrser, saddrl)) == -1){
-        perror("bind() failed");
-        exit(1);
-    }
-    
-    if (listen(sd,5) < 0){
-        perror("listen() failed");
-        exit(1);
-    }
-    while (1){
-        saddrCliLen = sizeof(saddrcli);
-        if ((sds = accept(sd, (struct sockaddr *) &saddrcli, &saddrCliLen)) < 0){
-            perror("accept() failed");
-            exit(1);
-        }
-
-        pid = fork();
-        if(pid < 0){
-            perror("fork() failed");
-            return 1;
-        }
-        else if(pid > 0){
-            //processus père se remet directement en accept
-        }
-        else {
-            //pid=0 processus fils
-            printf("Traitement du client par un processus fils\n");
-            traiterClient(sds);
-            return 0;
-        }
-    }
-
-    close(sd); //close server socket
-
-    return 0;
-
-    //eventuellement handler ctrl C pour close sd mais le mettre en valeur globale
+	}
+	return 0;
+ 
 }
+
