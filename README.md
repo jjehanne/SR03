@@ -17,3 +17,9 @@ TD02 : Communication par sockets TCP
 - C/ Serveur TCP concourant et clients TCP
 
 Sujet : http://moodle.utc.fr/file.php/872/TD_P2013/td_sockets_tcp.html
+
+------------------------------------------------------------------------------------
+
+TD03 : HTTP - WEB - CSS
+
+http://moodle.utc.fr/file.php/872/TD_P2013/td_web.html
